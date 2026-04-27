@@ -85,21 +85,11 @@ jobs:
           ignore-unfixed: true
           exit-code: "0"
 
-      - name: Validate GHCR token
-        shell: bash
-        env:
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-        run: |
-          if [ -z "$GHCR_TOKEN" ]; then
-            echo "GHCR_TOKEN is missing. Add a repository or organization secret named GHCR_TOKEN with write:packages and read:packages access."
-            exit 1
-          fi
-
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Push Docker image to GHCR

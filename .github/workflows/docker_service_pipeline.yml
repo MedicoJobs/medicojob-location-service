@@ -76,6 +76,42 @@ jobs:
             ${{ steps.image.outputs.sha_tag }}
             ${{ steps.image.outputs.latest_tag }}
 
+      - name: Smoke test Docker image
+        shell: bash
+        run: |
+          container="${{ steps.image.outputs.service }}-smoke"
+
+          cleanup() {
+            docker rm -f "$container" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          docker run -d \
+            --name "$container" \
+            -e PORT=5005 \
+            -e MONGO_URI=mongodb://127.0.0.1:27017/location-smoke \
+            -p 5005:5005 \
+            "${{ steps.image.outputs.sha_tag }}"
+
+          for attempt in {1..20}; do
+            if [ "$(docker inspect -f '{{.State.Running}}' "$container")" != "true" ]; then
+              echo "Container exited before becoming ready."
+              docker logs "$container"
+              exit 1
+            fi
+
+            if timeout 2 bash -c "</dev/tcp/127.0.0.1/5005" 2>/dev/null; then
+              echo "Container is listening on port 5005."
+              exit 0
+            fi
+
+            sleep 1
+          done
+
+          echo "Container did not listen on port 5005 in time."
+          docker logs "$container"
+          exit 1
+
       - name: Scan image with Trivy
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
         with:

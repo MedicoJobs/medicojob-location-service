@@ -23,5 +23,5 @@ jobs:
       service_name: job-service
       service_path: .
     secrets:
-      GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN }}

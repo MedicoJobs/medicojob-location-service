@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -9,6 +11,11 @@ app.use(express.json());
 
 // FIXED: Using correct environment variable
 const MONGO_URI = process.env.MONGO_URI_LOCATION || process.env.MONGO_URI;
+
+if (!MONGO_URI) {
+  console.error('Location DB Connection Error: MONGO_URI_LOCATION or MONGO_URI is required');
+  process.exit(1);
+}
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log('Location Service DB Connected'))

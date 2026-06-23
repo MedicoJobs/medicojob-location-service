@@ -78,7 +78,7 @@ runs:
   steps:
     - name: Send email notification
       if: ${{ (inputs.email-to != '' || inputs.mail_to != '') && (inputs.email-from != '' || inputs.mail_from != '') && (inputs.smtp-server != '' || inputs.smtp_server != '') && (inputs.smtp-port != '' || inputs.smtp_port != '') && (inputs.smtp-username != '' || inputs.smtp_username != '') && (inputs.smtp-password != '' || inputs.smtp_password != '') }}
-      uses: dawidd6/action-send-mail@v3
+      uses: dawidd6/action-send-mail@2cea9617b09d79a095af21254fbcb7ae95903dde
       with:
         server_address: ${{ inputs.smtp-server || inputs.smtp_server }}
         server_port: ${{ inputs.smtp-port || inputs.smtp_port }}

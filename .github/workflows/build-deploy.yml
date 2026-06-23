@@ -33,17 +33,17 @@ jobs:
 
     steps:
       - name: Checkout service
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: ecr
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@4625ce35226a7557230889aae2f52eb50ec3dcda
 
       - name: Prepare image metadata
         id: image
@@ -56,10 +56,10 @@ jobs:
           echo "uri=$image_repo:$image_tag" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435
 
       - name: Build Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
         with:
           context: .
           file: ./Dockerfile
@@ -70,7 +70,7 @@ jobs:
             REACT_APP_API_URL=${{ vars.REACT_APP_API_URL || 'http://medicojobs.online' }}
 
       - name: Scan built image with Trivy
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@cf5c088a69634cd13ccddc735d7926162c31f9a6
         with:
           image-ref: ${{ steps.image.outputs.uri }}
           format: table
@@ -91,7 +91,7 @@ jobs:
           } > pipeline-artifacts/image-details.env
 
       - name: Upload image details artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: image-details
           path: pipeline-artifacts/image-details.env
@@ -107,7 +107,7 @@ jobs:
             exit 1
           fi
       - name: Checkout Helm repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: ${{ env.HELM_REPOSITORY }}
           ref: ${{ env.INFRA_BRANCH }}
@@ -158,7 +158,7 @@ jobs:
 
     steps:
       - name: Checkout service
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Send failure email
         uses: ./.github/actions/notification-action
